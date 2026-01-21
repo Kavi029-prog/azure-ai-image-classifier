@@ -11,11 +11,11 @@ async function predictImage() {
 
     const imageFile = fileInput.files[0];
 
-    try {
-        // These are injected by Azure Static Web Apps
-        const predictionUrl = window.PREDICTION_URL;
-        const predictionKey = window.PREDICTION_KEY;
+    // 🔴 DIRECT VALUES (for static app demo)
+    const predictionUrl = "https://eyeemotioncustomvision-prediction.cognitiveservices.azure.com/customvision/v3.0/Prediction/9911eeb2-c049-4f20-a122-58e9fab4440b/classify/iterations/eye-emotion-model-v1/url";
+    const predictionKey = "BAbCVxBtPbn8hkh4gZjgPRWKUuLAAjCU2TZmIX2Pph1hltAiINpdJQQJ99CAACYeBjFXJ3w3AAAIACOGDtsA";
 
+    try {
         const response = await fetch(predictionUrl, {
             method: "POST",
             headers: {
