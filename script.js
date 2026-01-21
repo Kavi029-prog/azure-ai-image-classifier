@@ -2,7 +2,7 @@ async function predictImage() {
     const fileInput = document.getElementById("imageInput");
     const result = document.getElementById("result");
 
-    if (fileInput.files.length === 0) {
+    if (!fileInput.files.length) {
         result.innerText = "Please upload an image first.";
         return;
     }
@@ -12,8 +12,16 @@ async function predictImage() {
     const imageFile = fileInput.files[0];
 
     try {
-        const response = await fetch(window.location.origin + "/api/predict", {
+        // These are injected by Azure Static Web Apps
+        const predictionUrl = window.PREDICTION_URL;
+        const predictionKey = window.PREDICTION_KEY;
+
+        const response = await fetch(predictionUrl, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/octet-stream",
+                "Prediction-Key": predictionKey
+            },
             body: imageFile
         });
 
@@ -24,14 +32,11 @@ async function predictImage() {
             return;
         }
 
-        const topPrediction = data.predictions[0];
-        const emotion = topPrediction.tagName;
-        const confidence = (topPrediction.probability * 100).toFixed(2);
+        const top = data.predictions[0];
+        result.innerText = `Emotion: ${top.tagName} (${(top.probability * 100).toFixed(2)}%)`;
 
-        result.innerText = `Emotion: ${emotion} (${confidence}%)`;
-
-    } catch (error) {
-        console.error(error);
-        result.innerText = "Prediction failed. Please try again.";
+    } catch (err) {
+        console.error(err);
+        result.innerText = "Prediction failed. Check console.";
     }
 }
